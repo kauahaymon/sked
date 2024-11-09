@@ -1,20 +1,28 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default function App() {
+import dataList from '../data/dataList'
+import Activity from '../components/Activity';
+
+export default function ActivityScreen() {
   return (
-    <View style={styles.container}>
-      <Text>Sked</Text>
+    <SafeAreaView style={styles.container}>
+      <Text>Atividades</Text>
       <StatusBar style="auto" />
-    </View>
+
+      <View>
+        <FlatList data={dataList}
+          extraData={(item: any) => item.id}
+          renderItem={(obj) => <Activity {...obj.item}/>}
+        />
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+    flex: 1
+  }
 });
