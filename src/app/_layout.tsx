@@ -1,12 +1,11 @@
-import { Tabs } from "expo-router";
+import { Stack } from "expo-router";
 import React from "react";
 
 export default function RootLayout() {
     return (
-        <Tabs>
-            <Tabs.Screen name="index" options={{ headerShown: false, tabBarLabel: 'Atividades'}}/>
-            <Tabs.Screen name="progress" options={{ headerShown: false, tabBarLabel: 'Progresso'}}/>
-        </Tabs>
-
+        <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="form" options={{ presentation: 'modal', headerShown: true }} />
+        </Stack>
     )
 }

@@ -18,6 +18,7 @@ export default function Activity(props: Props) {
 
     return (
         <View style={styles.container}>
+        
             <View style={styles.checkBoxContainer}>
                 <View style={styles.checkboxBase}>
                     <Pressable
@@ -50,22 +51,24 @@ const styles = StyleSheet.create({
         fontSize: 16
     },
     checkBoxContainer: {
-        width: '16%',
+        width: '15%',
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
 
     },
     checkboxChecked: {
         backgroundColor: 'gray',
         flexDirection: 'row',
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
     checkboxBase: {
-        width: 22,
-        height: 22,
-        borderRadius: 11,
-        borderWidth: 1,
-        alignItems: 'center'
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 25,
+        height: 25,
+        borderRadius: 13,
+        borderWidth: 1
     }
 })
