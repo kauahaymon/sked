@@ -21,12 +21,12 @@ export default function AddButton(props: Props) {
 const style = StyleSheet.create({
     button: {
         position: 'absolute',
-        right: 40,
-        bottom: 40,
+        right: 30,
+        bottom: 20,
         width: 60,
         height: 60,
         borderRadius: 30,
-        backgroundColor: 'gray',
+        backgroundColor: '#8226b6',
         alignItems: 'center',
         justifyContent: 'center'
     }

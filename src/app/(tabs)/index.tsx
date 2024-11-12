@@ -1,32 +1,39 @@
 import { StatusBar } from 'expo-status-bar';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-import dataList from '../../data/dataList'
 import Activity from '../../components/Activity';
-import { Link } from 'expo-router';
 import FormScreen from '../form';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import AddButton from '../../components/Addbutton';
+import { ActivityContext } from '../context/ActivityProvider';
 
 export default function ActivityScreen() {
-  const [formShown, setFormShown] = useState(false)
 
+  const { activity }: any = useContext(ActivityContext)
+  const [formShown, setFormShown] = useState(false)
   return (
     <SafeAreaView style={styles.container}>
-      <View>
-        <Text>Pendentes</Text>
+      <View style={styles.days}>
+        <TouchableOpacity style={styles.peddingStyle}>
+            <Text>Today</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.peddingStyle}>
+            <Text>Tomorrow</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.peddingStyle}>
+            <Text>Other</Text>
+        </TouchableOpacity>
       </View>
       <StatusBar style="auto" />
 
-      <FormScreen isVisible={formShown} onCancel={() => setFormShown(!formShown)} />
-
       <View style={styles.list}>
-        <FlatList data={dataList}
+        <FlatList data={activity}
           extraData={(item: any) => item.id}
           renderItem={(obj) => <Activity {...obj.item} />}
         />
       </View>
+      <FormScreen isVisible={formShown} onCancel={() => setFormShown(!formShown)} />
+
       <AddButton show={() => setFormShown(!formShown)} />
     </SafeAreaView>
   );
@@ -34,14 +41,32 @@ export default function ActivityScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    backgroundColor: '#fcfcfc'
   },
   header: {
     width: '100%',
     height: 55,
     backgroundColor: 'gray'
   },
+  days: {
+    marginTop: 10,
+    flexDirection: 'row',
+    marginHorizontal: 13,
+  },
+  peddingStyle: {
+    marginRight: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    backgroundColor: '#d9d9d9',
+    borderRadius: 20,
+  },
+  peddingText: {
+    color: 'white'
+  },
   list: {
-    flex: 3
+    flex: 1,
+    marginHorizontal: 13,
+    marginVertical: 13
   }
 });
