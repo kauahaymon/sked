@@ -1,29 +1,32 @@
-import { StatusBar } from "expo-status-bar";
-import React, { useContext, useState } from "react";
-import { Modal, Platform, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
-import RoomSelection from "../components/RoomSelection";
-import DateTimePicker from '@react-native-community/datetimepicker';
-import moment from 'moment';
-import { ActivityContext } from "./context/ActivityProvider";
+import React, { useContext, useRef, useState, useEffect } from "react"
+import { ToastAndroid, Modal, Platform, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View, Keyboard, KeyboardAvoidingView } from "react-native"
+import DateTimePicker from '@react-native-community/datetimepicker'
+import moment from 'moment'
+import { ActivityContext } from "./context/ActivityProvider"
 
 type Props = {
-    isVisible: boolean
-    onCancel: VoidFunction
+    isVisible: boolean;
+    onCancel: VoidFunction;
 }
 
 export default function FormScreen(props: Props) {
 
-    const { createActivity }: any = useContext(ActivityContext)
+    const { createActivity }: any = useContext(ActivityContext);
     const [theme, setTheme] = useState('');
     const [date, setDate] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
+    const inputRef = useRef<TextInput>(null);
 
-    const addActivity = () => {
-        createActivity(theme, 123, date)
-    }
+    useEffect(() => {
+        if (props.isVisible && inputRef.current) {
+            setTimeout(() => {
+                inputRef.current?.focus()
+            }, 100);
+        }
+    }, [props.isVisible])
 
     function TimePicker() {
-        const formattedDate = moment(date).format('DD');
+        const formattedDate = moment(date).format('DD/MM/YYYY');
 
         const handleDateChange = (_event: any, selectedDate?: Date) => {
             setShowDatePicker(false)
@@ -35,7 +38,7 @@ export default function FormScreen(props: Props) {
             onChange={handleDateChange}
             mode="date"
             display="default"
-        />
+        />;
 
         if (Platform.OS === 'android') {
             datePicker = (
@@ -45,40 +48,57 @@ export default function FormScreen(props: Props) {
                     </TouchableOpacity>
                     {showDatePicker && datePicker}
                 </View>
-            )
+            );
         }
+
         return datePicker;
-    };
+    }
+
+    const handleAddActivity = () => {
+        if (theme.trim()) {
+            createActivity({ theme, room: 103, date })
+            props.onCancel()
+        } else {
+            ToastAndroid.show("Fill the blanks", ToastAndroid.SHORT)
+        }
+    }
 
     return (
-        <View style={{ flex: 0, flexDirection: 'row', alignItems: 'center' }}>
+        <View style={{ flex: 1 }}>
             <Modal
                 transparent={true}
                 visible={props.isVisible}
                 onRequestClose={props.onCancel}
                 animationType="fade"
             >
-                <TouchableOpacity style={{ flex: 1 }} onPress={props.onCancel}>
+                <TouchableWithoutFeedback onPress={props.onCancel}>
                     <View style={style.overlay}>
-                        <Pressable style={style.modalView}>
-                            <View >
+                        <KeyboardAvoidingView
+                            style={style.modalView}
+                            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                            enabled
+                        >
+                            <Pressable style={style.modalContent} onPress={() => { }}>
+
                                 <TextInput
+                                    ref={inputRef}
                                     style={style.input}
-                                    placeholder="Insira o tema da aula"
+                                    placeholder="Enter a new class"
                                     value={theme}
                                     onChangeText={setTheme}
+                                    onFocus={() => { }}
                                 />
-                                <View style={{ flexDirection: 'row' }}>
-                                </View>
-                            </View>
-                        </Pressable>
-
+                                <TimePicker />
+                                <TouchableOpacity onPress={handleAddActivity} style={style.button}>
+                                    <Text>Adicionar Atividade</Text>
+                                </TouchableOpacity>
+                            </Pressable>
+                        </KeyboardAvoidingView>
                     </View>
-                </TouchableOpacity>
-
+                </TouchableWithoutFeedback>
             </Modal>
         </View>
-    );
+    )
 }
 
 const style = StyleSheet.create({
@@ -90,10 +110,16 @@ const style = StyleSheet.create({
     },
     modalView: {
         backgroundColor: 'white',
-        paddingBottom: 5,
+        padding: 20,
         width: '100%',
-        height: '30%'
-
+        borderRadius: 10,
+        justifyContent: 'center',
+        height: 200,
+    },
+    modalContent: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     input: {
         marginTop: 19,
@@ -102,14 +128,15 @@ const style = StyleSheet.create({
         borderColor: 'gray',
         height: 55,
         borderRadius: 6,
-        paddingStart: 12
+        paddingStart: 12,
+        width: '100%',
     },
     button: {
         borderWidth: 1,
         borderColor: 'gray',
         paddingHorizontal: 15,
-        paddingVertical: 5,
+        paddingVertical: 10,
         borderRadius: 5,
-        marginRight: 10
+        marginTop: 10,
     },
-});
+})

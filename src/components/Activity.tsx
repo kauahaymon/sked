@@ -14,6 +14,7 @@ export default function Activity(props: Props) {
     const [checked, setChecked] = useState(false)
 
     const date = moment(props.date).locale('pt-br').format('D[/]M')
+    
     const doneStyle: any = checked ? {
         textDecorationLine: 'line-through',
         color: '#861586'
@@ -35,7 +36,7 @@ export default function Activity(props: Props) {
 
             <View>
                 <Text style={[styles.title, doneStyle]}>{props.theme}</Text>
-                <Text style={styles.subtitle}>{props.room} 16-17h</Text>
+                <Text style={styles.subtitle}>{props.room} {date}</Text>
             </View>
         </View>
     )
