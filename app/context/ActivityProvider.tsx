@@ -17,9 +17,9 @@ export default function ActivityProvider({ children }: any) {
         }
         setActivity([...activity, newActivity])
     }
-    
+
     return (
-        <ActivityContext.Provider value={{ createActivity, activity}}>
+        <ActivityContext.Provider value={{ createActivity, activity }}>
             {children}
         </ActivityContext.Provider>
     )
