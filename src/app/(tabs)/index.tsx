@@ -14,14 +14,14 @@ export default function ActivityScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.days}>
-        <TouchableOpacity style={styles.peddingStyle}>
-            <Text>Today</Text>
+        <TouchableOpacity style={[styles.peddingStyle, { backgroundColor: '#8226b6'}]}>
+            <Text style={ {color: 'white'}}>Today</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.peddingStyle}>
-            <Text>Tomorrow</Text>
+            <Text style={styles.daysText}>Tomorrow</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.peddingStyle}>
-            <Text>Other</Text>
+            <Text style={styles.daysText}>Other</Text>
         </TouchableOpacity>
       </View>
       <StatusBar style="auto" />
@@ -61,8 +61,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#d9d9d9',
     borderRadius: 20,
   },
-  peddingText: {
-    color: 'white'
+  daysText: {
+    color: '#2b2b2b'
   },
   list: {
     flex: 1,

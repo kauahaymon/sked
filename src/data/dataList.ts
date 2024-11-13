@@ -8,18 +8,6 @@ const randomData = [
   {
     id: Math.random(),
     theme: 'Grammar',
-    room: 102,
-    date: new Date()
-  },
-  {
-    id: Math.random(),
-    theme: 'Grammar',
-    room: 101,
-    date: new Date()
-  },
-  {
-    id: Math.random(),
-    theme: 'Grammar',
     room: 105,
     date: new Date()
   },

@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
-import { FontAwesome } from "@expo/vector-icons";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
 
 type Props = {
     show: React.Dispatch<React.SetStateAction<boolean>>
@@ -13,7 +13,7 @@ export default function AddButton(props: Props) {
             onPress={() => props.show(rev => !rev)}
             activeOpacity={0.83}
         >
-            <FontAwesome name="plus" size={20} color={'white'} />
+            <Ionicons name="add" size={30} color={'white'} />
         </TouchableOpacity>
     )
 }

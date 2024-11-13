@@ -52,7 +52,8 @@ const styles = StyleSheet.create({
         borderRadius: 10
     },
     title: {
-        fontSize: 16
+        fontSize: 16,
+        color: '#2b2b2b'
     },
     subtitle: {
         fontSize: 12,
