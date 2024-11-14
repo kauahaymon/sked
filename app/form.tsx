@@ -1,22 +1,31 @@
 import React, { useContext, useRef, useState, useEffect } from "react"
 import { ToastAndroid, Modal, Platform, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View, Keyboard, KeyboardAvoidingView } from "react-native"
-import DateTimePicker from '@react-native-community/datetimepicker'
+import DateTimePicker, { TimePickerOptions } from '@react-native-community/datetimepicker'
 import moment from 'moment'
 import { ActivityContext } from "./context/ActivityProvider"
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
+import { format } from 'date-fns';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+
 
 type Props = {
     isVisible: boolean;
     onCancel: VoidFunction;
 }
 
+
 export default function FormScreen(props: Props) {
 
     const { createActivity }: any = useContext(ActivityContext)
     const [theme, setTheme] = useState('')
     const [date, setDate] = useState(new Date())
-    const [displayedDate, setDisplayedDate] = useState('Date')
+    const [displayedDate, setDisplayedDate] = useState('Today')
     const [showDatePicker, setShowDatePicker] = useState(false)
+
+    const [time, setTime] = useState(new Date())
+    const [showTimePicker, setShowTimePicker] = useState(false)
+    const [displayedTime, setDisplayedTime] = useState('Time')
+
 
     const inputRef = useRef<TextInput>(null)
 
@@ -28,14 +37,14 @@ export default function FormScreen(props: Props) {
         }
     }, [props.isVisible])
 
-    function TimePicker() {
+    function DatePicker() {
         const formattedDate = moment(date).format('DD/MM');
 
         const handleDateChange = (_event: any, selectedDate?: Date) => {
             setShowDatePicker(false)
             if (selectedDate) {
                 setDate(selectedDate);
-                setDisplayedDate(moment(selectedDate).format('DD/MM')); // Atualiza o estado da data
+                setDisplayedDate(moment(selectedDate).format('DD/MM'));
             }
         }
 
@@ -43,21 +52,61 @@ export default function FormScreen(props: Props) {
             value={date}
             onChange={handleDateChange}
             mode="date"
-            display="default"
-        />;
+            display="calendar"
+        />
 
         if (Platform.OS === 'android') {
             datePicker = (
                 <View>
-                    <TouchableOpacity onPress={() => setShowDatePicker(!showDatePicker)}>
-                        <Text>{displayedDate}</Text>
+                    <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => setShowDatePicker(!showDatePicker)}>
+                        <Text style={{ marginRight: 7 }}>
+                            {displayedDate}
+                        </Text>
+                        <Ionicons name="calendar-number" size={15} color={'purple'} />
                     </TouchableOpacity>
                     {showDatePicker && datePicker}
                 </View>
-            );
+            )
+        }
+        return datePicker;
+    }
+
+    function TimePiker() {
+        const handleTimeChange = (_event: any, selectedTime?: Date) => {
+            setShowTimePicker(false)
+            if (selectedTime) {
+                selectedTime.setMinutes(0)
+                selectedTime.setSeconds(0)
+                selectedTime.setMilliseconds(0)
+                const formattedTime = format(selectedTime, 'HH:mm')
+                setTime(selectedTime)
+                setDisplayedTime(formattedTime)
+                console.log(formattedTime)
+            }
         }
 
-        return datePicker;
+        let timePicker = <DateTimePicker
+            value={time}
+            onChange={handleTimeChange}
+            mode="time"
+            display="spinner"
+        />
+
+        if (Platform.OS === 'android') {
+            return timePicker = (
+                <View>
+                    <TouchableOpacity onPress={() => setShowTimePicker(!showTimePicker)}
+                        style={{ flexDirection: 'row', alignItems: 'center' }}
+                    >
+                        <Text style={{ marginRight: 7 }}>
+                            {displayedTime}
+                        </Text>
+                        <Ionicons name="time" size={17} color={'purple'} />
+                    </TouchableOpacity>
+                    {showTimePicker && timePicker}
+                </View>
+            )
+        }
     }
 
     function handleReset() {
@@ -65,6 +114,7 @@ export default function FormScreen(props: Props) {
         setTheme('')
         setDate(new Date())
         setDisplayedDate('Date')
+        setDisplayedTime('Time')
     }
 
     const handleAddActivity = () => {
@@ -109,10 +159,10 @@ export default function FormScreen(props: Props) {
                                             <Text>Room</Text>
                                         </TouchableOpacity>
                                         <TouchableOpacity style={style.optionButton} onPress={undefined}>
-                                            <TimePicker />
+                                            {DatePicker()}
                                         </TouchableOpacity>
                                         <TouchableOpacity style={style.optionButton} onPress={undefined}>
-                                            <Text>Time</Text>
+                                            {TimePiker()}
                                         </TouchableOpacity>
                                     </View>
                                     <TouchableOpacity style={style.add} onPress={handleAddActivity}>
@@ -138,8 +188,8 @@ const style = StyleSheet.create({
     modalView: {
         backgroundColor: 'white',
         width: '100%',
-        borderTopRightRadius: 10, 
-        borderTopLeftRadius: 10, 
+        borderTopRightRadius: 10,
+        borderTopLeftRadius: 10,
         justifyContent: 'center',
         height: 122,
     },

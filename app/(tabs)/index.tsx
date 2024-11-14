@@ -28,6 +28,7 @@ export default function ActivityScreen() {
 
       <View style={styles.list}>
         <FlatList data={activity}
+          showsVerticalScrollIndicator={false}
           extraData={(item: any) => item.id}
           renderItem={(obj) => <Activity {...obj.item} />}
         />
@@ -50,7 +51,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'gray'
   },
   days: {
-    
+
     flexDirection: 'row',
     marginHorizontal: 13,
   },
