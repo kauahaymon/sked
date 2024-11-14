@@ -6,6 +6,8 @@ import { ActivityContext } from "./context/ActivityProvider"
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { format } from 'date-fns';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import Room from "../components/buttons/RoomSelector"
+import RoomSelector from "../components/buttons/RoomSelector"
 
 
 type Props = {
@@ -17,6 +19,7 @@ type Props = {
 export default function FormScreen(props: Props) {
 
     const { createActivity }: any = useContext(ActivityContext)
+    const [room, setRoom] = useState('')
     const [theme, setTheme] = useState('')
     const [date, setDate] = useState(new Date())
     const [displayedDate, setDisplayedDate] = useState('Today')
@@ -119,7 +122,7 @@ export default function FormScreen(props: Props) {
 
     const handleAddActivity = () => {
         if (theme.trim()) {
-            createActivity({ theme, room: 103, date })
+            createActivity({ theme, room, date })
             props.onCancel()
             handleReset()
         } else {
@@ -155,9 +158,7 @@ export default function FormScreen(props: Props) {
                                 </View>
                                 <View style={{ flexDirection: 'row' }}>
                                     <View style={style.optionsContainer}>
-                                        <TouchableOpacity style={style.optionButton} onPress={undefined}>
-                                            <Text>Room</Text>
-                                        </TouchableOpacity>
+                                        <RoomSelector style={style.optionButton} onRoomSelect={(room: string) => setRoom(room)}/>
                                         <TouchableOpacity style={style.optionButton} onPress={undefined}>
                                             {DatePicker()}
                                         </TouchableOpacity>
