@@ -1,29 +1,30 @@
 import { Tabs } from "expo-router";
 import React from "react";
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 export default function TabLayout() {
     return (
         <Tabs screenOptions={{
             tabBarStyle: {
                 // show tab bar
-                height: 0
+                height: 50
             }
         }}>
             <Tabs.Screen name="index" options={{
                 headerShown: false, 
-                tabBarLabel: 'Atividades',
+                tabBarLabel: 'Classes',
                 tabBarIcon: ({focused, color}) => (
-                    <FontAwesome name={focused ? 'tasks' : 'tasks'} 
+                    <Icon name={focused ? 'list' : 'list'} 
                     color={color} 
                     size={24}/>
                 )
             }} />
             <Tabs.Screen name="progress" options={{ 
                 headerShown: false, 
-                tabBarLabel: 'Progresso', 
-                tabBarIcon: ({focused, color}) => (
-                    <Ionicons name={focused ? 'stats-chart' : 'stats-chart-sharp'} 
+                tabBarLabel: 'Scheduling', 
+                tabBarIcon: ({ focused, color}) => (
+                    <Icon name={focused ? 'calendar-today' : 'calendar-today'} 
                     color={color} 
                     size={24}/>
                 )

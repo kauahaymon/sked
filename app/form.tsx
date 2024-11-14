@@ -35,7 +35,7 @@ export default function FormScreen(props: Props) {
             setShowDatePicker(false)
             if (selectedDate) {
                 setDate(selectedDate);
-                setDisplayedDate(formattedDate)
+                setDisplayedDate(moment(selectedDate).format('DD/MM')); // Atualiza o estado da data
             }
         }
 
@@ -78,7 +78,7 @@ export default function FormScreen(props: Props) {
     }
 
     return (
-        <View style={{ flex: 1 }}>
+        <View>
             <Modal
                 transparent={true}
                 visible={props.isVisible}
@@ -138,7 +138,8 @@ const style = StyleSheet.create({
     modalView: {
         backgroundColor: 'white',
         width: '100%',
-        borderRadius: 10,
+        borderTopRightRadius: 10, 
+        borderTopLeftRadius: 10, 
         justifyContent: 'center',
         height: 122,
     },

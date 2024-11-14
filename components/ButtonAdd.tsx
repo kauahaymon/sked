@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
-import { FontAwesome, Ionicons } from "@expo/vector-icons";
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 type Props = {
     show: React.Dispatch<React.SetStateAction<boolean>>
@@ -13,7 +13,7 @@ export default function AddButton(props: Props) {
             onPress={() => props.show(rev => !rev)}
             activeOpacity={0.83}
         >
-            <Ionicons name="add" size={30} color={'white'} />
+            <Icon name="add" size={30} color={'white'} />
         </TouchableOpacity>
     )
 }
@@ -21,13 +21,14 @@ export default function AddButton(props: Props) {
 const style = StyleSheet.create({
     button: {
         position: 'absolute',
-        right: 30,
+        right: 20,
         bottom: 20,
         width: 60,
         height: 60,
         borderRadius: 30,
-        backgroundColor: '#8226b6',
+        backgroundColor: '#3b82f6',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        elevation: 5,
     }
 })

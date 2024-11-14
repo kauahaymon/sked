@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Activity from '../../components/Activity';
 import FormScreen from '../form';
 import { useContext, useState } from 'react';
-import AddButton from '../../components/Addbutton';
+import AddButton from '../../components/ButtonAdd';
 import { ActivityContext } from '../context/ActivityProvider';
 
 export default function ActivityScreen() {
@@ -50,12 +50,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'gray'
   },
   days: {
-    marginTop: 10,
+    
     flexDirection: 'row',
     marginHorizontal: 13,
   },
   peddingStyle: {
-    marginRight: 16,
+    marginVertical: 10,
+    marginRight: 12,
     paddingHorizontal: 10,
     paddingVertical: 3,
     backgroundColor: '#d9d9d9',
@@ -66,7 +67,6 @@ const styles = StyleSheet.create({
   },
   list: {
     flex: 1,
-    marginHorizontal: 13,
-    marginVertical: 13
+    paddingHorizontal: 10,
   }
 });
