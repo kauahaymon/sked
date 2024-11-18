@@ -30,7 +30,7 @@ export default function ActivityScreen() {
         <FlatList data={activity}
           showsVerticalScrollIndicator={false}
           extraData={(item: any) => item.id}
-          renderItem={(obj) => <Activity {...obj.item} />}
+          renderItem={({ item }) => <Activity {...item} />}
         />
       </View>
       <FormScreen isVisible={formShown} onCancel={() => setFormShown(!formShown)} />
@@ -51,7 +51,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'gray'
   },
   days: {
-
     flexDirection: 'row',
     marginHorizontal: 13,
   },

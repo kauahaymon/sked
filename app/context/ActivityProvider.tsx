@@ -8,12 +8,13 @@ export default function ActivityProvider({ children }: any) {
 
     const [activity, setActivity] = useState(initialState)
 
-    function createActivity({ theme, room, date }: { theme: string, room: number, date: Date }) {
+    function createActivity({ theme, room, date, time }: { theme: string, room: string, date: Date, time: Date }) {
         const newActivity = {
             id: Math.random(),
             theme: theme,
             room: room,
-            date: date
+            date: date,
+            time: time
         }
         setActivity([...activity, newActivity])
     }

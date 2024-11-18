@@ -3,18 +3,22 @@ import { View, Text, StyleSheet, Pressable } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import { FontAwesome } from "@expo/vector-icons";
 import moment from "moment";
+import { format } from 'date-fns';
 
 type Props = {
     theme: string
     room: number
-    date: any
+    date: Date
+    time: Date
 }
 
 export default function Activity(props: Props) {
     const [checked, setChecked] = useState(false)
 
-    const date = moment(props.date).locale('pt-br').format('D[/]M')
-    
+    const date = moment(props.date).format('DD MMM')
+
+    const formattedTime = `${format(props.time, 'HH')}h`
+
     const doneStyle: any = checked ? {
         textDecorationLine: 'line-through',
         color: '#861586'
@@ -29,14 +33,17 @@ export default function Activity(props: Props) {
                         aria-checked={checked}
                         style={[styles.checkboxBase, checked && styles.checkboxChecked]}
                         onPress={() => setChecked(!checked)}>
-                        {checked && <FontAwesome name="check" size={16} color="white"/>}
+                        {checked && <FontAwesome name="check" size={16} color="white" />}
                     </Pressable>
                 </View>
             </View>
 
-            <View>
+            <View style={{ flex: 1}}>
                 <Text style={[styles.title, doneStyle]}>{props.theme}</Text>
-                <Text style={styles.subtitle}>{props.room} {date}</Text>
+                <View style={{ flex: 1, flexDirection: 'row', width: '100%', alignItems: 'flex-end', justifyContent: 'space-between'}} >
+                    <Text style={ styles.subtitle}>{props.room} {formattedTime}</Text>
+                    <Text style={[{marginRight: 10}, styles.subtitle]}>{date}</Text>
+                </View>
             </View>
         </View>
     )
@@ -56,6 +63,7 @@ const styles = StyleSheet.create({
         color: '#2b2b2b'
     },
     subtitle: {
+        
         fontSize: 12,
         color: '#7c808f'
     },

@@ -1,14 +1,10 @@
 import React, { useContext, useRef, useState, useEffect } from "react"
-import { ToastAndroid, Modal, Platform, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View, Keyboard, KeyboardAvoidingView } from "react-native"
-import DateTimePicker, { TimePickerOptions } from '@react-native-community/datetimepicker'
+import { ToastAndroid, Modal, Platform, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View, KeyboardAvoidingView, Button } from "react-native"
+import DateTimePicker from '@react-native-community/datetimepicker'
 import moment from 'moment'
 import { ActivityContext } from "./context/ActivityProvider"
-import { FontAwesome, Ionicons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { format } from 'date-fns';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import Room from "../components/buttons/RoomSelector"
-import RoomSelector from "../components/buttons/RoomSelector"
-
 
 type Props = {
     isVisible: boolean;
@@ -19,16 +15,16 @@ type Props = {
 export default function FormScreen(props: Props) {
 
     const { createActivity }: any = useContext(ActivityContext)
-    const [room, setRoom] = useState('')
+    const [room, setRoom] = useState('Room')
     const [theme, setTheme] = useState('')
     const [date, setDate] = useState(new Date())
     const [displayedDate, setDisplayedDate] = useState('Today')
     const [showDatePicker, setShowDatePicker] = useState(false)
-
+    const [showMenu, setShowMenu] = useState(false)
     const [time, setTime] = useState(new Date())
     const [showTimePicker, setShowTimePicker] = useState(false)
     const [displayedTime, setDisplayedTime] = useState('Time')
-
+    const [showAddRoomModal, setShowAddRoomModal] = useState(false)
 
     const inputRef = useRef<TextInput>(null)
 
@@ -40,14 +36,28 @@ export default function FormScreen(props: Props) {
         }
     }, [props.isVisible])
 
+    function RoomSelector() {
+        return (
+            <TouchableOpacity style={style.optionButton} onPress={() => setShowMenu(!showMenu)}>
+                <Text>Room</Text>
+            </TouchableOpacity>
+        )
+
+    }
+
     function DatePicker() {
-        const formattedDate = moment(date).format('DD/MM');
 
         const handleDateChange = (_event: any, selectedDate?: Date) => {
             setShowDatePicker(false)
             if (selectedDate) {
-                setDate(selectedDate);
-                setDisplayedDate(moment(selectedDate).format('DD/MM'));
+                const today = new Date()
+                const formattedDate = moment(selectedDate).format('DD MMM')
+                setDate(selectedDate)
+                if (selectedDate.toDateString() === today.toDateString()) {
+                    setDisplayedDate('Today')
+                } else {
+                    setDisplayedDate(formattedDate)
+                }
             }
         }
 
@@ -61,7 +71,7 @@ export default function FormScreen(props: Props) {
         if (Platform.OS === 'android') {
             datePicker = (
                 <View>
-                    <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => setShowDatePicker(!showDatePicker)}>
+                    <TouchableOpacity style={style.optionButton} onPress={() => setShowDatePicker(!showDatePicker)}>
                         <Text style={{ marginRight: 7 }}>
                             {displayedDate}
                         </Text>
@@ -81,9 +91,10 @@ export default function FormScreen(props: Props) {
                 selectedTime.setMinutes(0)
                 selectedTime.setSeconds(0)
                 selectedTime.setMilliseconds(0)
-                const formattedTime = format(selectedTime, 'HH:mm')
-                setTime(selectedTime)
+                console.log('hora: ' + selectedTime)
+                const formattedTime = `${format(selectedTime, 'HH')}h`
                 setDisplayedTime(formattedTime)
+                setTime(selectedTime)
                 console.log(formattedTime)
             }
         }
@@ -99,7 +110,7 @@ export default function FormScreen(props: Props) {
             return timePicker = (
                 <View>
                     <TouchableOpacity onPress={() => setShowTimePicker(!showTimePicker)}
-                        style={{ flexDirection: 'row', alignItems: 'center' }}
+                        style={style.optionButton}
                     >
                         <Text style={{ marginRight: 7 }}>
                             {displayedTime}
@@ -116,13 +127,17 @@ export default function FormScreen(props: Props) {
         props.onCancel()
         setTheme('')
         setDate(new Date())
-        setDisplayedDate('Date')
+        setRoom('Room')
+        setDisplayedDate('Today')
         setDisplayedTime('Time')
     }
 
     const handleAddActivity = () => {
-        if (theme.trim()) {
-            createActivity({ theme, room, date })
+        console.log(room)
+        if (theme.trim() !== '' && room !== 'Room') {
+            createActivity({ theme, room, date, time })
+            console.log()
+            console.log(date)
             props.onCancel()
             handleReset()
         } else {
@@ -132,19 +147,13 @@ export default function FormScreen(props: Props) {
 
     return (
         <View>
-            <Modal
-                transparent={true}
-                visible={props.isVisible}
-                onRequestClose={handleReset}
-                animationType="fade"
-            >
+            <Modal transparent={true} visible={props.isVisible} onRequestClose={handleReset} animationType="fade">
                 <TouchableWithoutFeedback onPress={props.onCancel}>
                     <View style={style.overlay}>
                         <KeyboardAvoidingView
-                            style={style.modalView}
-                            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                            enabled
-                        >
+                            style={[style.modalView, { height: showTimePicker ? 121 : 120 }]}
+                            behavior={Platform.OS === 'ios' ? 'padding' : "height"}
+                            enabled >
                             <Pressable style={style.modalContent} onPress={() => { }}>
                                 <View style={style.inputContainer}>
                                     <TextInput
@@ -158,24 +167,26 @@ export default function FormScreen(props: Props) {
                                 </View>
                                 <View style={{ flexDirection: 'row' }}>
                                     <View style={style.optionsContainer}>
-                                        <RoomSelector style={style.optionButton} onRoomSelect={(room: string) => setRoom(room)}/>
-                                        <TouchableOpacity style={style.optionButton} onPress={undefined}>
-                                            {DatePicker()}
-                                        </TouchableOpacity>
-                                        <TouchableOpacity style={style.optionButton} onPress={undefined}>
-                                            {TimePiker()}
-                                        </TouchableOpacity>
+                                        <RoomSelector />
+                                        <DatePicker />
+                                        <TimePiker />
+                                        {showMenu && <View style={{ position: 'absolute', bottom: 40, height: 150, width: 150, backgroundColor: 'plum', elevation: 5}}></View>}
                                     </View>
                                     <TouchableOpacity style={style.add} onPress={handleAddActivity}>
                                         <Ionicons name="arrow-up-sharp" size={25} color={'white'} />
                                     </TouchableOpacity>
                                 </View>
                             </Pressable>
+                            <Modal visible={showAddRoomModal}>
+                                <View style={style.overlay}>
+
+                                </View>
+                            </Modal>
                         </KeyboardAvoidingView>
                     </View>
                 </TouchableWithoutFeedback>
             </Modal>
-        </View>
+        </View >
     )
 }
 
@@ -184,34 +195,30 @@ const style = StyleSheet.create({
         flex: 1,
         backgroundColor: 'rgba(0, 0, 0, 0.8)',
         justifyContent: 'flex-end',
-        alignItems: 'center'
     },
     modalView: {
+        height: 120,
         backgroundColor: 'white',
-        width: '100%',
+        width: '100%', 
+        padding: 10,
         borderTopRightRadius: 10,
         borderTopLeftRadius: 10,
         justifyContent: 'center',
-        height: 122,
     },
     modalContent: {
-        flex: 1,
-        marginTop: 15
+        flex: 1
     },
     optionsContainer: {
         flex: 1,
         flexDirection: 'row',
-        width: 200,
-        marginLeft: 15,
         alignItems: 'center',
     },
     inputContainer: {
         width: '100%',
-        marginBottom: 1,
     },
     input: {
         borderWidth: 1,
-        marginHorizontal: 15,
+        marginHorizontal: 1,
         borderColor: 'gray',
         backgroundColor: '#f5f5f5',
         height: 55,
@@ -220,6 +227,8 @@ const style = StyleSheet.create({
         paddingStart: 12,
     },
     optionButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
         backgroundColor: '#d9d9d9',
         paddingVertical: 6,
         paddingHorizontal: 10,
@@ -232,7 +241,6 @@ const style = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#7cad82',
-        marginRight: 10,
         borderRadius: 25
     }
 })
