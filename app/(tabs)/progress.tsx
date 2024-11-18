@@ -17,8 +17,6 @@ export default function Progress() {
               <Button title="close" onPress={() => setIsModal1Visible(false)} />
               <Button title="open new modal" onPress={() => setIsModal2Visible(true)} />
             </View>
-
-
             <Modal visible={isModal2Visible} onRequestClose={() => setIsModal2Visible(false)} animationType="fade">
               <TouchableWithoutFeedback onPress={() => setIsModal2Visible(false)}>
                 <View style={{ flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.6)', justifyContent: 'center' }}>

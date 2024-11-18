@@ -34,7 +34,7 @@ export default function ActivityScreen() {
         />
       </View>
       <FormScreen isVisible={formShown} onCancel={() => setFormShown(!formShown)} />
-
+        
       <AddButton show={() => setFormShown(!formShown)} />
     </SafeAreaView>
   );

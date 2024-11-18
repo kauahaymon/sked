@@ -1,10 +1,11 @@
 import React, { useContext, useRef, useState, useEffect } from "react"
-import { ToastAndroid, Modal, Platform, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View, KeyboardAvoidingView, Button } from "react-native"
+import { ToastAndroid, Modal, Platform, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View, KeyboardAvoidingView, Button, FlatList, TouchableHighlight, VirtualizedList } from "react-native"
 import DateTimePicker from '@react-native-community/datetimepicker'
 import moment from 'moment'
 import { ActivityContext } from "./context/ActivityProvider"
 import { Ionicons } from "@expo/vector-icons";
 import { format } from 'date-fns';
+
 
 type Props = {
     isVisible: boolean;
@@ -12,7 +13,7 @@ type Props = {
 }
 
 
-export default function FormScreen(props: Props) {
+export default function FormScreen({isVisible, onCancel}: Props) {
 
     const { createActivity }: any = useContext(ActivityContext)
     const [room, setRoom] = useState('Room')
@@ -25,24 +26,32 @@ export default function FormScreen(props: Props) {
     const [showTimePicker, setShowTimePicker] = useState(false)
     const [displayedTime, setDisplayedTime] = useState('Time')
     const [showAddRoomModal, setShowAddRoomModal] = useState(false)
+    const [roomList, setRoomList] = useState([
+        { id: 1, title: 'Cimena' },
+        { id: 2, title: 'Smart Lab' },
+        { id: 3, title: 'Cooking' },
+    ])
+    const [newRoom, setNewRoom] = useState('')
 
-    const inputRef = useRef<TextInput>(null)
+    const classInputRef = useRef<TextInput>(null);
+    const roomInputRef = useRef<TextInput>(null);
 
     useEffect(() => {
-        if (props.isVisible && inputRef.current) {
+        if (isVisible) {
             setTimeout(() => {
-                inputRef.current?.focus()
-            }, 100)
+                classInputRef.current?.focus();
+                roomInputRef.current?.focus()
+            }, 200);
         }
-    }, [props.isVisible])
+    }, [isVisible]);
+
 
     function RoomSelector() {
         return (
             <TouchableOpacity style={style.optionButton} onPress={() => setShowMenu(!showMenu)}>
-                <Text>Room</Text>
+                <Text>{room}</Text>
             </TouchableOpacity>
         )
-
     }
 
     function DatePicker() {
@@ -71,7 +80,10 @@ export default function FormScreen(props: Props) {
         if (Platform.OS === 'android') {
             datePicker = (
                 <View>
-                    <TouchableOpacity style={style.optionButton} onPress={() => setShowDatePicker(!showDatePicker)}>
+                    <TouchableOpacity style={style.optionButton} onPress={() => {
+                        setShowDatePicker(!showDatePicker)
+                        setShowMenu(false)
+                    }}>
                         <Text style={{ marginRight: 7 }}>
                             {displayedDate}
                         </Text>
@@ -104,12 +116,16 @@ export default function FormScreen(props: Props) {
             onChange={handleTimeChange}
             mode="time"
             display="spinner"
+            themeVariant="light"
         />
 
         if (Platform.OS === 'android') {
             return timePicker = (
                 <View>
-                    <TouchableOpacity onPress={() => setShowTimePicker(!showTimePicker)}
+                    <TouchableOpacity onPress={() => {
+                        setShowTimePicker(!showTimePicker)
+                        setShowMenu(false)
+                    }}
                         style={style.optionButton}
                     >
                         <Text style={{ marginRight: 7 }}>
@@ -124,7 +140,7 @@ export default function FormScreen(props: Props) {
     }
 
     function handleReset() {
-        props.onCancel()
+        onCancel()
         setTheme('')
         setDate(new Date())
         setRoom('Room')
@@ -138,55 +154,151 @@ export default function FormScreen(props: Props) {
             createActivity({ theme, room, date, time })
             console.log()
             console.log(date)
-            props.onCancel()
+            onCancel()
             handleReset()
         } else {
             ToastAndroid.show("Fill the blanks", ToastAndroid.SHORT)
         }
     }
 
+    const addNewRoom = () => {
+        roomList.push(
+            { id: Math.random(), title: newRoom }
+        )
+        setShowAddRoomModal(false)
+        setRoom(newRoom)
+        setNewRoom('')
+    }
+
     return (
         <View>
-            <Modal transparent={true} visible={props.isVisible} onRequestClose={handleReset} animationType="fade">
-                <TouchableWithoutFeedback onPress={props.onCancel}>
+            <Modal transparent={true} visible={isVisible} onRequestClose={handleReset} animationType="fade">
+                <TouchableWithoutFeedback onPress={() => {
+                    onCancel()
+                    setShowMenu(false)
+                    handleReset()
+                }}>
                     <View style={style.overlay}>
                         <KeyboardAvoidingView
-                            style={[style.modalView, { height: showTimePicker ? 121 : 120 }]}
-                            behavior={Platform.OS === 'ios' ? 'padding' : "height"}
-                            enabled >
-                            <Pressable style={style.modalContent} onPress={() => { }}>
+                            style={style.modalView}
+                            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                            enabled
+                        >
+                            <Pressable style={style.modalContent} onPress={() => setShowMenu(false)}>
                                 <View style={style.inputContainer}>
                                     <TextInput
-                                        ref={inputRef}
+                                        ref={classInputRef}
                                         style={style.input}
                                         placeholder="Enter a new class topic here"
                                         value={theme}
                                         onChangeText={setTheme}
-                                        onFocus={() => { }}
+                                        onPress={() => setShowMenu(false)}
                                     />
                                 </View>
+
                                 <View style={{ flexDirection: 'row' }}>
                                     <View style={style.optionsContainer}>
                                         <RoomSelector />
                                         <DatePicker />
                                         <TimePiker />
-                                        {showMenu && <View style={{ position: 'absolute', bottom: 40, height: 150, width: 150, backgroundColor: 'plum', elevation: 5}}></View>}
                                     </View>
+
                                     <TouchableOpacity style={style.add} onPress={handleAddActivity}>
                                         <Ionicons name="arrow-up-sharp" size={25} color={'white'} />
                                     </TouchableOpacity>
                                 </View>
                             </Pressable>
-                            <Modal visible={showAddRoomModal}>
-                                <View style={style.overlay}>
+                            {showMenu && (
+                                <View
+                                    style={{
+                                        position: 'absolute',
+                                        bottom: 46,
+                                        left: 10,
+                                        width: 180,
+                                        backgroundColor: 'white',
+                                        elevation: 5,
+                                        borderRadius: 8,
+                                        padding: 5,
+                                        height: 150,
+                                    }}
+                                >
+                                    <FlatList
+                                        style={{ backgroundColor: 'lightgray' }}
+                                        keyboardShouldPersistTaps="handled"
+                                        scrollEnabled={true}
+                                        data={roomList}
+                                        keyExtractor={(index) => index.toString()}
+                                        renderItem={({ item }) => (
+                                            <TouchableOpacity
+                                                activeOpacity={0.7}
+                                                style={{
+                                                    padding: 10,
+                                                    backgroundColor: 'white',
+                                                }}
+                                                onPress={() => {
+                                                    setRoom(item.title)
+                                                    setShowMenu(false)
+                                                }}
+                                            >
+                                                <Text>{item.title}</Text>
+                                            </TouchableOpacity>
+                                        )}
+                                        ListFooterComponent={() => (
+                                            <TouchableOpacity
+                                                style={{
+                                                    padding: 10,
+                                                    backgroundColor: 'white',
+                                                    alignItems: 'flex-start',
+                                                }}
+                                                onPress={() => {
+                                                    setShowAddRoomModal(!showAddRoomModal);
+                                                    setShowMenu(!showMenu);
+                                                }}
+                                            >
+                                                <Text style={{ color: 'blue', fontWeight: 'bold' }}>+ Add New</Text>
+                                            </TouchableOpacity>
+                                        )}
+                                    />
 
                                 </View>
-                            </Modal>
+                            )}
                         </KeyboardAvoidingView>
+
                     </View>
                 </TouchableWithoutFeedback>
             </Modal>
-        </View >
+
+            {/* Segundo Modal  */}
+            <Modal transparent visible={showAddRoomModal} onRequestClose={() => setShowAddRoomModal(false)} animationType="fade">
+                <TouchableWithoutFeedback onPress={() => {
+                    setShowAddRoomModal(false)
+                    setNewRoom('')
+                }}>
+                    <View style={{ flex: 1, justifyContent: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+                        <View style={{ backgroundColor: 'white', padding: 20 }}>
+                            <Text>Add New Room</Text>
+                            <TextInput
+                                ref={roomInputRef}
+                                style={{ borderWidth: 1, marginBottom: 10, padding: 5 }}
+                                placeholder="Ex.: 102"
+                                value={newRoom}
+                                onChangeText={setNewRoom}
+                                autoFocus={true}
+                            />
+                            <TouchableOpacity style={{ padding: 10, backgroundColor: '#007BFF' }} onPress={addNewRoom}>
+                                <Text style={{ color: 'white' }}>Add Room</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => {
+                                setShowAddRoomModal(false)
+                                setNewRoom('')
+                            }}>
+                                <Text style={{ color: 'red', marginTop: 10 }}>Cancel</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </TouchableWithoutFeedback>
+            </Modal>
+        </View>
     )
 }
 
@@ -197,13 +309,13 @@ const style = StyleSheet.create({
         justifyContent: 'flex-end',
     },
     modalView: {
-        height: 120,
         backgroundColor: 'white',
-        width: '100%', 
+        width: '100%',
         padding: 10,
         borderTopRightRadius: 10,
         borderTopLeftRadius: 10,
         justifyContent: 'center',
+        minHeight: 120
     },
     modalContent: {
         flex: 1
