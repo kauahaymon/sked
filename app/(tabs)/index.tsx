@@ -3,14 +3,33 @@ import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Activity from '../../components/Activity';
 import FormScreen from '../form';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import AddButton from '../../components/ButtonAdd';
 import { ActivityContext } from '../context/ActivityProvider';
 
 export default function ActivityScreen() {
 
-  const { activity }: any = useContext(ActivityContext)
+  const { activity, getDataList }: any = useContext(ActivityContext)
   const [formShown, setFormShown] = useState(false)
+  const [classesList, setClassesList] = useState([{
+    id: Math.random(),
+    theme: 'Grammar',
+    room: '103',
+    date: new Date(),
+    time: new Date()
+  },
+  {
+    id: Math.random(),
+    theme: 'Past Simple',
+    room: '105',
+    date: new Date(),
+    time: new Date()
+  }])
+
+  useEffect(() => {
+    getDataList()
+  }, [])
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.days}>
@@ -27,6 +46,7 @@ export default function ActivityScreen() {
       <StatusBar style="auto" />
 
       <View style={styles.list}>
+        
         <FlatList data={activity}
           showsVerticalScrollIndicator={false}
           extraData={(item: any) => item.id}
@@ -34,7 +54,7 @@ export default function ActivityScreen() {
         />
       </View>
       <FormScreen isVisible={formShown} onCancel={() => setFormShown(!formShown)} />
-        
+
       <AddButton show={() => setFormShown(!formShown)} />
     </SafeAreaView>
   );

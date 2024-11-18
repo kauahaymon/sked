@@ -1,11 +1,12 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import randomData from "../../data/dataList";
-
 export const ActivityContext = createContext({})
-const initialState: any = randomData
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { parseJSON } from "date-fns";
 
 export default function ActivityProvider({ children }: any) {
 
+    const initialState: any = []
     const [activity, setActivity] = useState(initialState)
 
     function createActivity({ theme, room, date, time }: { theme: string, room: string, date: Date, time: Date }) {
@@ -16,11 +17,40 @@ export default function ActivityProvider({ children }: any) {
             date: date,
             time: time
         }
-        setActivity([...activity, newActivity])
+        const updatedState = [...activity, newActivity]
+        setActivity(updatedState)
+        storeDataList(updatedState)
     }
 
+    const storeDataList = async (value: any) => {
+        try {
+            const jsonValue = JSON.stringify(value)
+            await AsyncStorage.setItem('dataList', jsonValue)
+        } catch (error) {
+            console.error('Failed saving data: ', error)
+        }
+    }
+
+    const getDataList = async () => {
+        try {
+            const jsonValue = await AsyncStorage.getItem('dataList')
+            if (jsonValue !== null) {
+                const parsedData = JSON.parse(jsonValue)
+                setActivity(parsedData)
+                return parsedData
+            }
+            
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    useEffect(() => {
+        getDataList()
+    }, [])
+
     return (
-        <ActivityContext.Provider value={{ createActivity, activity }}>
+        <ActivityContext.Provider value={{ createActivity, activity, getDataList }}>
             {children}
         </ActivityContext.Provider>
     )
