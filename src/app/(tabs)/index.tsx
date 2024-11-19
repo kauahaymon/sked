@@ -5,7 +5,7 @@ import Activity from '../../components/Activity';
 import FormScreen from '../form';
 import { useContext, useEffect, useState } from 'react';
 import AddButton from '../../components/ButtonAdd';
-import { ActivityContext } from '../context/ActivityProvider';
+import { ActivityContext } from '../../context/ActivityProvider';
 
 export default function ActivityScreen() {
 

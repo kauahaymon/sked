@@ -6,7 +6,7 @@ import moment from "moment";
 import { format } from 'date-fns';
 import Swipeable, { SwipeableMethods } from 'react-native-gesture-handler/ReanimatedSwipeable';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { ActivityContext } from "../app/context/ActivityProvider";
+import { ActivityContext } from "../context/ActivityProvider";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 
 type Props = {

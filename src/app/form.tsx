@@ -2,7 +2,7 @@ import React, { useContext, useRef, useState, useEffect } from "react"
 import { ToastAndroid, Modal, Platform, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View, KeyboardAvoidingView, Button, FlatList, TouchableHighlight, VirtualizedList } from "react-native"
 import DateTimePicker from '@react-native-community/datetimepicker'
 import moment from 'moment'
-import { ActivityContext } from "./context/ActivityProvider"
+import { ActivityContext } from "../context/ActivityProvider"
 import { Ionicons } from "@expo/vector-icons";
 import { format } from 'date-fns';
 
@@ -13,7 +13,7 @@ type Props = {
 }
 
 
-export default function FormScreen({isVisible, onCancel}: Props) {
+export default function FormScreen({ isVisible, onCancel }: Props) {
 
     const { createActivity }: any = useContext(ActivityContext)
     const [room, setRoom] = useState('Room')
