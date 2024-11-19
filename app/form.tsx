@@ -27,9 +27,9 @@ export default function FormScreen({isVisible, onCancel}: Props) {
     const [displayedTime, setDisplayedTime] = useState('Time')
     const [showAddRoomModal, setShowAddRoomModal] = useState(false)
     const [roomList, setRoomList] = useState([
-        { id: 1, title: 'Cimena' },
-        { id: 2, title: 'Smart Lab' },
-        { id: 3, title: 'Cooking' },
+        { id: Math.random(), title: 'Cimena' },
+        { id: Math.random(), title: 'Smart Lab' },
+        { id: Math.random(), title: 'Cooking' },
     ])
     const [newRoom, setNewRoom] = useState('')
 

@@ -9,22 +9,8 @@ import { ActivityContext } from '../context/ActivityProvider';
 
 export default function ActivityScreen() {
 
-  const { activity, getDataList }: any = useContext(ActivityContext)
+  const { activity, getDataList, deleteActivity }: any = useContext(ActivityContext)
   const [formShown, setFormShown] = useState(false)
-  const [classesList, setClassesList] = useState([{
-    id: Math.random(),
-    theme: 'Grammar',
-    room: '103',
-    date: new Date(),
-    time: new Date()
-  },
-  {
-    id: Math.random(),
-    theme: 'Past Simple',
-    room: '105',
-    date: new Date(),
-    time: new Date()
-  }])
 
   useEffect(() => {
     getDataList()
@@ -46,11 +32,11 @@ export default function ActivityScreen() {
       <StatusBar style="auto" />
 
       <View style={styles.list}>
-        
+
         <FlatList data={activity}
           showsVerticalScrollIndicator={false}
-          extraData={(item: any) => item.id}
-          renderItem={({ item }) => <Activity {...item} />}
+          keyExtractor={(item: any) => item.id.toString()}
+          renderItem={({ item }) => <Activity {...item} id={item.id}/>}
         />
       </View>
       <FormScreen isVisible={formShown} onCancel={() => setFormShown(!formShown)} />
@@ -63,12 +49,12 @@ export default function ActivityScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fcfcfc'
+    backgroundColor: '#f8f8f8'
   },
   header: {
     width: '100%',
     height: 55,
-    backgroundColor: 'gray'
+    backgroundColor: '#959595'
   },
   days: {
     flexDirection: 'row',

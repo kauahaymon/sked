@@ -22,6 +22,12 @@ export default function ActivityProvider({ children }: any) {
         storeDataList(updatedState)
     }
 
+    function deleteActivity(id: number) {
+        const updatedState = activity.filter((activity: any) => activity.id !== id)
+        setActivity(updatedState)
+        storeDataList(updatedState)
+    }
+
     const storeDataList = async (value: any) => {
         try {
             const jsonValue = JSON.stringify(value)
@@ -50,7 +56,7 @@ export default function ActivityProvider({ children }: any) {
     }, [])
 
     return (
-        <ActivityContext.Provider value={{ createActivity, activity, getDataList }}>
+        <ActivityContext.Provider value={{ createActivity, activity, getDataList, deleteActivity }}>
             {children}
         </ActivityContext.Provider>
     )
